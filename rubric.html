@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>
+    
+     body{
+     
+       margin:5px;
+       font-family:Verdana;
+       font-size:60%;
+     
+     }
+      .option-title{
+        color:red;
+      }
+   
+    </style>
+  
+    <script>
+    
+      function sumbit(){
+      
+      google.script.host.close();
+      
+      }
+      
+    </script>
+  
+    <base target="_top">
+  </head>
+  <body>
+    <h1>How would you rate yourself?</h1>
+    <hr/>
+    <div class="option">
+       <h3 class="option-title"> Ideas:</h3>
+         <ul> 
+           <li>My ideas are clear and focused</li>
+           <li>My ideas are creative and original</li></ul>
+         <input id="ideas-ta" type="textarea" placeholder="enter 0-5">
+    </div>
+    
+    <div class="option">
+       <h3 class="option-title"> Organization:</h3>
+       <ul> 
+         <li>My writing has a beginning, middle and end</li>
+         <li>I transition well between paragraphs</li>
+         <li>The events or ideas are in the right order</li> </ul>
+        <input id="org-ta" type="textarea" placeholder="enter 0-5">
+    </div>
+    
+    <div class="option">
+    <h3 class="option-title"> Conventions:</h3>
+     <ul> 
+       <li>My spelling is correct</li>
+       <li>I capitalize the correct words</li>
+       <li>My sentences are complete</li>
+       <li>I use proper punctuation</li></ul>
+     <input id="conv-ta" type="textarea" placeholder="enter 0-5">
+    </div>
+    
+    <div class="option">
+    <h3 class="option-title"> Style:</h3>
+     <ul> 
+       <li>I have a unique voice when I write</li>
+       <li>My writing will be interesting to most people</li>
+       <li>I use new words and vocabulary</li>
+       <li>I use different sentence types as needed</li></ul>
+      <input id="style-ta" type="textarea" placeholder="enter 0-5">
+    </div>
+    
+    <hr>
+    <br>
+     <div class="block" id="button-bar">
+       <button class="blue" id="submit-btn">Submit</button>
+       <button id="cancel-btn" onclick="google.script.host.close()">Close</button>
+    </div>
+  </body>
+   
+  <!--Using Jquery to make life easier -->
+  
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+  </script>
+    
+  <script>
+    
+    //attach the function to submit button when document loads
+    $(function(){
+
+      $('#submit-btn').click(submitRubric);
+      
+    });
+    
+    //grab all the text box values, if empty, set to 0
+    function submitRubric(){
+      
+      var ideas = $('#ideas-ta').val();
+      
+      if (ideas==""){
+      
+        ideas = "0";
+        
+      }
+      
+      var organization = $("#org-ta").val();
+      
+       if (organization==""){
+      
+        organization = "0";
+        
+      }
+      
+      var conventions = $("#conv-ta").val();
+      
+      if (conventions==""){
+      
+        conventions = "0";
+      }
+      
+      var style= $("#style-ta").val();
+      
+      if (style == ""){
+      
+        style=0;
+      
+      }
+      
+     //build the array to create table
+      var responses = [
+      
+       ['Ideas: '+ ' ' +  ideas , 'Organization : ' + '  ' + organization],
+       ['Conventions: ' + ' ' + conventions , 'Style: ' + ' ' + style]
+        
+      ];
+      
+      //add up the points:
+      
+      var total = parseInt(ideas) + parseInt(conventions) + parseInt(style) + parseInt(organization);
+      
+      //create self evaluation message
+      var selfEval = 'I think I should get '+  total + '/20 possible points ';
+      
+        this.disabled = true;
+        
+        //run the script on the Code.gs file w/ handlers
+        google.script.run
+              .withSuccessHandler(
+                function(returnSuccess, element) {
+                  element.disabled = false;
+                })
+              .withFailureHandler(
+                function(msg, element) {
+                  showError(msg, $('#button-bar'));
+                  element.disabled = false;
+                })
+              .withUserObject(this)
+              .insertText(selfEval, responses);
+              
+              
+              //finally close the side panel
+             //google.script.host.close();
+      
+    
+    }
+    
+     function showError(msg, element) {
+        var div = $('<div id="error" class="error">' + msg + '</div>');
+        $(element).after(div);
+        alert(msg);
+      }
+    
+    </script>
+</html>
+
